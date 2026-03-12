@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GameDeal — Entrar</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#0a0a0f; --glass:rgba(255,255,255,0.05); --border:rgba(255,255,255,0.10);
+      --purple:#8b5cf6; --cyan:#06b6d4; --green:#10b981;
+      --text:#e2e8f0; --muted:#94a3b8;
+      --grad:linear-gradient(135deg,#8b5cf6,#06b6d4);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;}
+    a{text-decoration:none;color:inherit;}
+    img{display:block;}
+
+    /* navbar */
+    .navbar{position:sticky;top:0;z-index:999;background:rgba(10,10,15,.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:68px;}
+    .nav-logo{font-family:'Orbitron',sans-serif;font-size:1.25rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .nav-links{display:flex;gap:1.8rem;list-style:none;}
+    .nav-links a{color:var(--muted);font-size:.9rem;font-weight:500;transition:color .2s;}
+    .nav-links a:hover{color:var(--text);}
+    .nav-links .btn-nav{background:var(--grad);color:#fff!important;padding:.4rem 1.1rem;border-radius:50px;font-weight:600;}
+    .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;}
+    .hamburger span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;}
+    @media(max-width:768px){
+      .hamburger{display:flex;}
+      .nav-links{display:none;position:absolute;top:68px;left:0;right:0;background:rgba(10,10,15,.98);flex-direction:column;padding:1.5rem 2rem;gap:1rem;border-bottom:1px solid var(--border);}
+      .nav-links.open{display:flex;}
+    }
+
+    /* glass card */
+    .card{background:var(--glass);border:1px solid var(--border);border-radius:14px;backdrop-filter:blur(10px);transition:transform .2s,border-color .2s,box-shadow .2s;}
+    .card:hover{transform:translateY(-4px);border-color:rgba(139,92,246,.4);box-shadow:0 10px 35px rgba(139,92,246,.18);}
+
+    /* botões */
+    .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.65rem 1.6rem;border-radius:50px;font-weight:600;font-size:.9rem;cursor:pointer;border:none;font-family:inherit;transition:opacity .2s,transform .15s;}
+    .btn:hover{opacity:.85;transform:scale(1.02);}
+    .btn-grad{background:var(--grad);color:#fff;}
+    .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text);}
+    .btn-ghost:hover{border-color:var(--purple);}
+
+    /* inputs */
+    .field{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:.7rem 1rem;font-family:inherit;font-size:.9rem;outline:none;transition:border-color .2s;}
+    .field:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(139,92,246,.2);}
+    .field::placeholder{color:rgba(148,163,184,.4);}
+    select.field option{background:#1a1a2e;}
+    label.lbl{display:block;color:var(--muted);font-size:.82rem;margin-bottom:.4rem;}
+
+    /* badges */
+    .badge{display:inline-block;font-size:.7rem;font-weight:600;padding:.2rem .65rem;border-radius:50px;}
+    .badge-purple{background:rgba(139,92,246,.2);color:#a78bfa;}
+    .badge-cyan{background:rgba(6,182,212,.2);color:#22d3ee;}
+    .badge-green{background:rgba(16,185,129,.2);color:#34d399;}
+    .badge-red{background:rgba(239,68,68,.2);color:#f87171;}
+    .badge-gold{background:rgba(234,179,8,.2);color:#fbbf24;}
+
+    /* layout */
+    .container{max-width:1160px;margin:0 auto;padding:0 1.5rem;}
+    .section{padding:4rem 0;}
+    .section-tag{display:inline-block;background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.3);color:var(--purple);font-size:.72rem;font-weight:700;padding:.25rem .8rem;border-radius:50px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.8rem;}
+    .section-title{font-family:'Orbitron',sans-serif;font-size:clamp(1.5rem,3vw,2rem);margin-bottom:.7rem;}
+    .grad-text{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .stars{color:#fbbf24;font-size:.85rem;}
+    .divider{display:flex;align-items:center;gap:.8rem;color:var(--muted);font-size:.8rem;margin:1rem 0;}
+    .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+
+    /* games grid */
+    .games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.2rem;}
+    .gcard-img{width:100%;height:150px;object-fit:cover;border-radius:10px 10px 0 0;}
+    .gcard-body{padding:.9rem;}
+    .gcard-title{font-weight:700;font-size:.9rem;margin:.4rem 0 .6rem;}
+    .price-best{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);color:#34d399;font-weight:700;font-size:.88rem;padding:.3rem .75rem;border-radius:8px;}
+
+    /* footer */
+    footer{background:rgba(255,255,255,.02);border-top:1px solid var(--border);padding:3rem 0 1.5rem;margin-top:4rem;}
+    .footer-cols{display:grid;grid-template-columns:2fr 1fr 1fr;gap:2.5rem;margin-bottom:2.5rem;}
+    footer h5{font-size:.85rem;font-weight:700;color:var(--text);margin-bottom:.8rem;}
+    footer ul{list-style:none;}
+    footer li{margin-bottom:.4rem;}
+    footer a{color:var(--muted);font-size:.83rem;transition:color .2s;}
+    footer a:hover{color:var(--purple);}
+    footer p{color:var(--muted);font-size:.83rem;line-height:1.7;}
+    .footer-bottom{border-top:1px solid var(--border);padding-top:1.2rem;text-align:center;}
+    .footer-bottom p{color:var(--muted);font-size:.78rem;}
+    @media(max-width:680px){.footer-cols{grid-template-columns:1fr 1fr;}}
+  </style>
+  <style>
+    .login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;}
+    .login-box{width:100%;max-width:420px;}
+    .login-logo{text-align:center;margin-bottom:2rem;}
+    .login-logo h1{font-family:'Orbitron',sans-serif;font-size:1.7rem;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .login-logo p{color:var(--muted);font-size:.85rem;margin-top:.3rem;}
+    .tabs{display:flex;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:50px;padding:.3rem;margin-bottom:1.8rem;}
+    .tab{flex:1;padding:.5rem;border:none;background:none;color:var(--muted);border-radius:50px;cursor:pointer;font-weight:600;font-size:.88rem;transition:all .2s;font-family:inherit;}
+    .tab.active{background:var(--grad);color:#fff;}
+    .fgroup{margin-bottom:1.1rem;}
+    .pass-wrap{position:relative;}
+    .eye{position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;}
+    .msg{display:none;border-radius:10px;padding:.7rem 1rem;margin-top:.8rem;font-size:.85rem;}
+    .msg.ok{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.4);color:#34d399;}
+    .msg.err{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.4);color:#f87171;}
+    .str-bar{height:3px;border-radius:3px;background:var(--border);margin-top:.35rem;overflow:hidden;}
+    .str-fill{height:100%;border-radius:3px;transition:all .3s;width:0;}
+    .social-btn{display:flex;align-items:center;justify-content:center;gap:.6rem;width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;padding:.65rem;color:var(--text);font-size:.88rem;transition:border-color .2s;cursor:pointer;font-family:inherit;}
+    .social-btn:hover{border-color:var(--purple);}
+    .row-check{display:flex;justify-content:space-between;align-items:center;font-size:.8rem;margin:.3rem 0 1rem;}
+    .row-check label{color:var(--muted);display:flex;align-items:center;gap:.4rem;cursor:pointer;}
+    .row-check a{color:var(--purple);}
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">🎮 GameDeal</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Início</a></li>
+    <li><a href="catalogo.html">Catálogo</a></li>
+    <li><a href="jogo.html">Em Alta</a></li>
+    <li><a href="perfil.html">Minha Lista</a></li>
+    <li><a href="login.html" class="btn-nav">Entrar</a></li>
+  </ul>
+  <button class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="login-page">
+  <div class="login-box">
+    <div class="login-logo">
+      <h1>🎮 GameDeal</h1>
+      <p>Acesse sua conta e comece a economizar</p>
+    </div>
+    <div class="card" style="padding:2rem;">
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('login',this)">Entrar</button>
+        <button class="tab" onclick="switchTab('register',this)">Criar conta</button>
+      </div>
+
+      <form id="loginForm" method="POST" action="#" onsubmit="doLogin(event)">
+        <div class="fgroup">
+          <label class="lbl">E-mail</label>
+          <input type="email" name="email" class="field" placeholder="gamer@email.com" required>
+        </div>
+        <div class="fgroup">
+          <label class="lbl">Senha</label>
+          <div class="pass-wrap">
+            <input type="password" id="lPass" name="senha" class="field" style="padding-right:2.5rem;" placeholder="••••••••" required>
+            <button type="button" class="eye" onclick="togglePass('lPass',this)">👁️</button>
+          </div>
+        </div>
+        <div class="row-check">
+          <label><input type="checkbox" name="lembrar"> Lembrar-me</label>
+          <a href="#">Esqueci a senha</a>
+        </div>
+        <button type="submit" class="btn btn-grad" style="width:100%;justify-content:center;">Entrar</button>
+        <div class="divider">ou</div>
+        <button type="button" class="social-btn">🌐 Entrar com Google</button>
+      </form>
+
+      <form id="registerForm" method="POST" action="#" style="display:none;" onsubmit="doRegister(event)">
+        <div class="fgroup">
+          <label class="lbl">Nome de usuário</label>
+          <input type="text" name="usuario" class="field" placeholder="gamer_pro" required minlength="4">
+        </div>
+        <div class="fgroup">
+          <label class="lbl">E-mail</label>
+          <input type="email" name="email" class="field" placeholder="gamer@email.com" required>
+        </div>
+        <div class="fgroup">
+          <label class="lbl">Senha</label>
+          <div class="pass-wrap">
+            <input type="password" id="rPass" name="senha" class="field" style="padding-right:2.5rem;" placeholder="Mínimo 8 caracteres" required minlength="8" oninput="checkStr(this.value)">
+            <button type="button" class="eye" onclick="togglePass('rPass',this)">👁️</button>
+          </div>
+          <div class="str-bar"><div class="str-fill" id="strFill"></div></div>
+          <small id="strTxt" style="color:var(--muted);font-size:.73rem;"></small>
+        </div>
+        <div class="fgroup">
+          <label class="lbl">Confirmar senha</label>
+          <input type="password" name="conf" class="field" placeholder="Repita a senha" required>
+        </div>
+        <div class="fgroup">
+          <label class="lbl">Data de nascimento</label>
+          <input type="date" name="nasc" class="field" required>
+        </div>
+        <div style="margin-bottom:1.1rem;">
+          <label style="display:flex;align-items:center;gap:.4rem;color:var(--muted);font-size:.8rem;cursor:pointer;">
+            <input type="checkbox" name="termos" required> Li e aceito os <a href="#" style="color:var(--purple);">Termos de Uso</a>
+          </label>
+        </div>
+        <button type="submit" class="btn btn-grad" style="width:100%;justify-content:center;">Criar Conta</button>
+      </form>
+
+      <div id="msg" class="msg"></div>
+    </div>
+  </div>
+</div>
+<script>
+  function switchTab(t,btn){
+    document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('loginForm').style.display=t==='login'?'block':'none';
+    document.getElementById('registerForm').style.display=t==='register'?'block':'none';
+    const m=document.getElementById('msg');m.style.display='none';m.className='msg';
+  }
+  function togglePass(id,btn){const el=document.getElementById(id);el.type=el.type==='password'?'text':'password';btn.textContent=el.type==='password'?'👁️':'🙈';}
+  function checkStr(v){
+    let s=0;if(v.length>=8)s++;if(/[A-Z]/.test(v))s++;if(/[0-9]/.test(v))s++;if(/[^A-Za-z0-9]/.test(v))s++;
+    const l=[['20%','#ef4444','Fraca'],['45%','#f59e0b','Média'],['72%','#10b981','Boa'],['100%','#8b5cf6','Forte']][s-1]||['10%','#ef4444',''];
+    document.getElementById('strFill').style.cssText=`width:${l[0]};background:${l[1]};`;
+    document.getElementById('strTxt').textContent=l[2]?'Força: '+l[2]:'';
+    document.getElementById('strTxt').style.color=l[1];
+  }
+  function showMsg(txt,ok){const el=document.getElementById('msg');el.style.display='block';el.className='msg '+(ok?'ok':'err');el.textContent=txt;}
+  function doLogin(e){e.preventDefault();showMsg('✅ Login realizado! Redirecionando...',true);setTimeout(()=>window.location.href='index.html',1500);}
+  function doRegister(e){e.preventDefault();showMsg('🎉 Conta criada! Bem-vindo ao GameDeal!',true);setTimeout(()=>switchTab('login',document.querySelector('.tab')),2000);}
+</script>
+</body>
+</html>

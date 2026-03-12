@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GameDeal — Minha Lista</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#0a0a0f; --glass:rgba(255,255,255,0.05); --border:rgba(255,255,255,0.10);
+      --purple:#8b5cf6; --cyan:#06b6d4; --green:#10b981;
+      --text:#e2e8f0; --muted:#94a3b8;
+      --grad:linear-gradient(135deg,#8b5cf6,#06b6d4);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;}
+    a{text-decoration:none;color:inherit;}
+    img{display:block;}
+
+    /* navbar */
+    .navbar{position:sticky;top:0;z-index:999;background:rgba(10,10,15,.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:68px;}
+    .nav-logo{font-family:'Orbitron',sans-serif;font-size:1.25rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .nav-links{display:flex;gap:1.8rem;list-style:none;}
+    .nav-links a{color:var(--muted);font-size:.9rem;font-weight:500;transition:color .2s;}
+    .nav-links a:hover{color:var(--text);}
+    .nav-links .btn-nav{background:var(--grad);color:#fff!important;padding:.4rem 1.1rem;border-radius:50px;font-weight:600;}
+    .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;}
+    .hamburger span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;}
+    @media(max-width:768px){
+      .hamburger{display:flex;}
+      .nav-links{display:none;position:absolute;top:68px;left:0;right:0;background:rgba(10,10,15,.98);flex-direction:column;padding:1.5rem 2rem;gap:1rem;border-bottom:1px solid var(--border);}
+      .nav-links.open{display:flex;}
+    }
+
+    /* glass card */
+    .card{background:var(--glass);border:1px solid var(--border);border-radius:14px;backdrop-filter:blur(10px);transition:transform .2s,border-color .2s,box-shadow .2s;}
+    .card:hover{transform:translateY(-4px);border-color:rgba(139,92,246,.4);box-shadow:0 10px 35px rgba(139,92,246,.18);}
+
+    /* botões */
+    .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.65rem 1.6rem;border-radius:50px;font-weight:600;font-size:.9rem;cursor:pointer;border:none;font-family:inherit;transition:opacity .2s,transform .15s;}
+    .btn:hover{opacity:.85;transform:scale(1.02);}
+    .btn-grad{background:var(--grad);color:#fff;}
+    .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text);}
+    .btn-ghost:hover{border-color:var(--purple);}
+
+    /* inputs */
+    .field{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:.7rem 1rem;font-family:inherit;font-size:.9rem;outline:none;transition:border-color .2s;}
+    .field:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(139,92,246,.2);}
+    .field::placeholder{color:rgba(148,163,184,.4);}
+    select.field option{background:#1a1a2e;}
+    label.lbl{display:block;color:var(--muted);font-size:.82rem;margin-bottom:.4rem;}
+
+    /* badges */
+    .badge{display:inline-block;font-size:.7rem;font-weight:600;padding:.2rem .65rem;border-radius:50px;}
+    .badge-purple{background:rgba(139,92,246,.2);color:#a78bfa;}
+    .badge-cyan{background:rgba(6,182,212,.2);color:#22d3ee;}
+    .badge-green{background:rgba(16,185,129,.2);color:#34d399;}
+    .badge-red{background:rgba(239,68,68,.2);color:#f87171;}
+    .badge-gold{background:rgba(234,179,8,.2);color:#fbbf24;}
+
+    /* layout */
+    .container{max-width:1160px;margin:0 auto;padding:0 1.5rem;}
+    .section{padding:4rem 0;}
+    .section-tag{display:inline-block;background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.3);color:var(--purple);font-size:.72rem;font-weight:700;padding:.25rem .8rem;border-radius:50px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.8rem;}
+    .section-title{font-family:'Orbitron',sans-serif;font-size:clamp(1.5rem,3vw,2rem);margin-bottom:.7rem;}
+    .grad-text{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .stars{color:#fbbf24;font-size:.85rem;}
+    .divider{display:flex;align-items:center;gap:.8rem;color:var(--muted);font-size:.8rem;margin:1rem 0;}
+    .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+
+    /* games grid */
+    .games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.2rem;}
+    .gcard-img{width:100%;height:150px;object-fit:cover;border-radius:10px 10px 0 0;}
+    .gcard-body{padding:.9rem;}
+    .gcard-title{font-weight:700;font-size:.9rem;margin:.4rem 0 .6rem;}
+    .price-best{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);color:#34d399;font-weight:700;font-size:.88rem;padding:.3rem .75rem;border-radius:8px;}
+
+    /* footer */
+    footer{background:rgba(255,255,255,.02);border-top:1px solid var(--border);padding:3rem 0 1.5rem;margin-top:4rem;}
+    .footer-cols{display:grid;grid-template-columns:2fr 1fr 1fr;gap:2.5rem;margin-bottom:2.5rem;}
+    footer h5{font-size:.85rem;font-weight:700;color:var(--text);margin-bottom:.8rem;}
+    footer ul{list-style:none;}
+    footer li{margin-bottom:.4rem;}
+    footer a{color:var(--muted);font-size:.83rem;transition:color .2s;}
+    footer a:hover{color:var(--purple);}
+    footer p{color:var(--muted);font-size:.83rem;line-height:1.7;}
+    .footer-bottom{border-top:1px solid var(--border);padding-top:1.2rem;text-align:center;}
+    .footer-bottom p{color:var(--muted);font-size:.78rem;}
+    @media(max-width:680px){.footer-cols{grid-template-columns:1fr 1fr;}}
+  </style>
+  <style>
+    .profile-top{background:linear-gradient(135deg,rgba(139,92,246,.1),rgba(6,182,212,.05));border-bottom:1px solid var(--border);padding:2.5rem 0 2rem;}
+    .avatar{width:85px;height:85px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0;}
+    .chip{background:var(--glass);border:1px solid var(--border);border-radius:10px;padding:.7rem 1.1rem;text-align:center;}
+    .chip .n{font-family:'Orbitron',sans-serif;font-size:1.2rem;color:var(--purple);}
+    .chip .l{color:var(--muted);font-size:.72rem;margin-top:.2rem;}
+    .ptabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+    .ptab{background:none;border:none;color:var(--muted);padding:.75rem 1.1rem;cursor:pointer;font-size:.86rem;font-family:inherit;font-weight:500;border-bottom:2px solid transparent;transition:all .2s;}
+    .ptab.active{color:var(--text);border-bottom-color:var(--purple);}
+    .psec{display:none;}
+    .psec.active{display:block;}
+    .edit-panel{background:var(--glass);border:1px solid var(--border);border-radius:14px;backdrop-filter:blur(10px);padding:1.8rem;display:none;margin-bottom:2rem;}
+    .edit-panel.open{display:block;}
+    .form-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+    @media(max-width:600px){.form-2{grid-template-columns:1fr;}}
+    .alert-row{display:flex;align-items:center;gap:.9rem;padding:.9rem;border-bottom:1px solid var(--border);}
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">🎮 GameDeal</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Início</a></li>
+    <li><a href="catalogo.html">Catálogo</a></li>
+    <li><a href="jogo.html">Em Alta</a></li>
+    <li><a href="perfil.html">Minha Lista</a></li>
+    <li><a href="login.html" class="btn-nav">Entrar</a></li>
+  </ul>
+  <button class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<main>
+  <header class="profile-top">
+    <div class="container">
+      <div style="display:flex;align-items:center;gap:1.8rem;flex-wrap:wrap;">
+        <div class="avatar">🎮</div>
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;margin-bottom:.3rem;">
+            <h1 style="font-family:'Orbitron',sans-serif;font-size:1.5rem;">gamer_rafael</h1>
+            <span class="badge badge-purple">⭐ PRO</span>
+          </div>
+          <p style="color:var(--muted);font-size:.83rem;">Membro desde Janeiro 2024 · Maceió, BR</p>
+          <div style="display:flex;gap:.9rem;margin-top:1rem;flex-wrap:wrap;">
+            <div class="chip"><div class="n">14</div><div class="l">Salvos</div></div>
+            <div class="chip"><div class="n">6</div><div class="l">Alertas</div></div>
+            <div class="chip"><div class="n">R$312</div><div class="l">Economizado</div></div>
+          </div>
+        </div>
+        <button class="btn btn-ghost" onclick="toggleEdit()" style="font-size:.83rem;padding:.48rem 1.1rem;">✏️ Editar Perfil</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container section">
+    <!-- Editar -->
+    <div class="edit-panel" id="editPanel">
+      <h3 style="font-size:.9rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:1.3rem;">Editar Perfil</h3>
+      <form method="POST" action="#" onsubmit="saveEdit(event)">
+        <div class="form-2">
+          <div><label class="lbl">Nome de usuário</label><input type="text" name="usuario" class="field" value="gamer_rafael" required></div>
+          <div><label class="lbl">E-mail</label><input type="email" name="email" class="field" value="rafael@email.com" required></div>
+          <div><label class="lbl">Localização</label><input type="text" name="local" class="field" value="Maceió, BR"></div>
+          <div><label class="lbl">Gênero favorito</label>
+            <select name="genero" class="field"><option>Terror</option><option>RPG</option><option>Indie</option><option>Ação</option></select>
+          </div>
+          <div style="grid-column:1/-1;"><label class="lbl">Bio</label><textarea name="bio" class="field" rows="2" style="resize:vertical;">Caçador de ofertas e fã de survival horror.</textarea></div>
+          <div><label class="lbl">Nova senha</label><input type="password" name="nova_senha" class="field" placeholder="Deixe em branco para manter"></div>
+          <div><label class="lbl">Confirmar senha</label><input type="password" name="conf_senha" class="field" placeholder="Repita a nova senha"></div>
+        </div>
+        <div style="display:flex;gap:.7rem;margin-top:1.3rem;">
+          <button type="submit" class="btn btn-grad" style="font-size:.85rem;padding:.52rem 1.3rem;">Salvar</button>
+          <button type="button" class="btn btn-ghost" onclick="toggleEdit()" style="font-size:.85rem;padding:.52rem 1.3rem;">Cancelar</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Tabs -->
+    <div class="ptabs">
+      <button class="ptab active" onclick="showSec('lista',this)">❤️ Lista de Desejos</button>
+      <button class="ptab" onclick="showSec('alertas',this)">🔔 Alertas</button>
+    </div>
+
+    <div id="sec-lista" class="psec active">
+      <div class="games-grid" id="wishGrid"></div>
+    </div>
+
+    <div id="sec-alertas" class="psec">
+      <div class="card" style="overflow:hidden;">
+        <div style="padding:.9rem 1.2rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+          <h4 style="font-size:.88rem;">Alertas de preço ativos</h4>
+          <a href="catalogo.html" class="btn btn-grad" style="font-size:.78rem;padding:.38rem .9rem;">+ Adicionar</a>
+        </div>
+        
+        <div class="alert-row">
+          <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/3764200/header.jpg" onerror="this.src='https://placehold.co/70x40/0f0f1a/8b5cf6?text=game'" style="width:70px;height:40px;object-fit:cover;border-radius:6px;flex-shrink:0;">
+          <div style="flex:1;">
+            <p style="font-weight:600;font-size:.86rem;">Resident Evil Requiem</p>
+            <p style="color:var(--muted);font-size:.73rem;">Alerta para abaixo de R$ 219,90</p>
+          </div>
+          <span class="badge badge-green">Ativo</span>
+        </div>
+        <div class="alert-row">
+          <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1245620/header.jpg" onerror="this.src='https://placehold.co/70x40/0f0f1a/8b5cf6?text=game'" style="width:70px;height:40px;object-fit:cover;border-radius:6px;flex-shrink:0;">
+          <div style="flex:1;">
+            <p style="font-weight:600;font-size:.86rem;">Elden Ring</p>
+            <p style="color:var(--muted);font-size:.73rem;">Alerta para abaixo de R$ 134,90</p>
+          </div>
+          <span class="badge badge-green">Ativo</span>
+        </div>
+        <div class="alert-row">
+          <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/367520/header.jpg" onerror="this.src='https://placehold.co/70x40/0f0f1a/8b5cf6?text=game'" style="width:70px;height:40px;object-fit:cover;border-radius:6px;flex-shrink:0;">
+          <div style="flex:1;">
+            <p style="font-weight:600;font-size:.86rem;">Hollow Knight</p>
+            <p style="color:var(--muted);font-size:.73rem;">Alerta para abaixo de R$  15,99</p>
+          </div>
+          <span class="badge badge-green">Ativo</span>
+        </div>
+        <div class="alert-row">
+          <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/292030/header.jpg" onerror="this.src='https://placehold.co/70x40/0f0f1a/8b5cf6?text=game'" style="width:70px;height:40px;object-fit:cover;border-radius:6px;flex-shrink:0;">
+          <div style="flex:1;">
+            <p style="font-weight:600;font-size:.86rem;">The Witcher 3</p>
+            <p style="color:var(--muted);font-size:.73rem;">Alerta para abaixo de R$  29,99</p>
+          </div>
+          <span class="badge badge-green">Ativo</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="footer-cols">
+      <div>
+        <p style="font-family:'Orbitron',sans-serif;font-size:1rem;font-weight:900;background:linear-gradient(135deg,#8b5cf6,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.6rem;">🎮 GameDeal</p>
+        <p>Compare preços de jogos entre Steam, Epic, Nuuvem, PS Store e Xbox Store.</p>
+      </div>
+      <div>
+        <h5>Lojas</h5>
+        <ul>
+          <li><a href="#">Steam</a></li>
+          <li><a href="#">Epic Games</a></li>
+          <li><a href="#">Nuuvem</a></li>
+          <li><a href="#">PS Store</a></li>
+          <li><a href="#">Xbox Store</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Links</h5>
+        <ul>
+          <li><a href="index.html">Início</a></li>
+          <li><a href="catalogo.html">Catálogo</a></li>
+          <li><a href="login.html">Login</a></li>
+          <li><a href="perfil.html">Minha Lista</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 GameDeal — Todos os direitos reservados.</p>
+    </div>
+  </div>
+</footer>
+<script>
+  const wishGames=[{title:"Resident Evil Requiem",genre:"Terror",best_price:"R$ 219,90",best_store:"Nuuvem",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/3764200/header.jpg"},{title:"Elden Ring",genre:"RPG",best_price:"R$ 134,90",best_store:"Nuuvem",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/1245620/header.jpg"},{title:"Hollow Knight",genre:"Indie",best_price:"R$  15,99",best_store:"Steam",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/367520/header.jpg"},{title:"The Witcher 3",genre:"RPG",best_price:"R$  29,99",best_store:"Epic",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/292030/header.jpg"},{title:"CS2",genre:"Ação",best_price:"Grátis",best_store:"Steam",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/730/header.jpg"},{title:"Hades",genre:"Indie",best_price:"R$  29,90",best_store:"Nuuvem",img:"https://cdn.cloudflare.steamstatic.com/steam/apps/1145360/header.jpg"}];
+  const gColor={'RPG': 'badge-purple', 'Indie': 'badge-cyan', 'Ação': 'badge-red', 'Estratégia': 'badge-gold', 'Terror': 'badge-red', 'Sandbox': 'badge-green'};
+  const grid=document.getElementById('wishGrid');
+  wishGames.forEach(g=>{
+    grid.innerHTML+=`
+      <a href="jogo.html">
+        <div class="card" style="overflow:hidden;">
+          <img src="${g.img}" alt="${g.title}"
+            onerror="this.src='https://placehold.co/460x215/0f0f1a/8b5cf6?text=${encodeURIComponent(g.title)}'"
+            style="width:100%;height:140px;object-fit:cover;">
+          <div class="gcard-body">
+            <div style="display:flex;justify-content:space-between;margin-bottom:.3rem;">
+              <span class="badge ${gColor[g.genre]||'badge-purple'}">${g.genre}</span>
+            </div>
+            <p class="gcard-title">${g.title}</p>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span class="price-best">${g.best_price}</span>
+              <span style="color:var(--muted);font-size:.72rem;">${g.best_store}</span>
+            </div>
+          </div>
+        </div>
+      </a>`;
+  });
+
+  function showSec(n,btn){
+    document.querySelectorAll('.psec').forEach(s=>s.classList.remove('active'));
+    document.querySelectorAll('.ptab').forEach(b=>b.classList.remove('active'));
+    document.getElementById('sec-'+n).classList.add('active');btn.classList.add('active');
+  }
+  function toggleEdit(){document.getElementById('editPanel').classList.toggle('open');}
+  function saveEdit(e){e.preventDefault();toggleEdit();alert('✅ Perfil atualizado!');}
+</script>
+</body>
+</html>
