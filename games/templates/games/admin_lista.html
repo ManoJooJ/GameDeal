@@ -1,0 +1,53 @@
+{% extends "games/base.html" %}
+{% block title %}Admin — GameDeal{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top:2.5rem">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2rem">
+    <div>
+      <span class="section-tag">Painel Admin</span>
+      <h1 class="section-title">Gerenciar <span class="grad-text">Jogos</span></h1>
+      <p style="color:var(--muted);font-size:.88rem">{{ games|length }} jogo(s) cadastrado(s)</p>
+    </div>
+    <a href="{% url 'admin_novo' %}" class="btn btn-grad" style="margin-top:.5rem">+ Novo Jogo</a>
+  </div>
+
+  <div class="card" style="overflow:hidden;padding:0">
+    <table>
+      <thead>
+        <tr><th>Capa</th><th>Nome</th><th>Gênero</th><th>Steam</th><th>Nuuvem</th><th>Epic</th><th>Nota</th><th>Ações</th></tr>
+      </thead>
+      <tbody>
+        {% for game in games %}
+        <tr>
+          <td>
+            {% if "http" in game.imagem %}
+              <img src="{{ game.imagem }}" alt="{{ game.nome }}" style="width:60px;height:35px;object-fit:cover;border-radius:4px">
+            {% elif game.imagem %}
+              <img src="/media/{{ game.imagem }}" alt="{{ game.nome }}" style="width:60px;height:35px;object-fit:cover;border-radius:4px">
+            {% else %}
+              <div style="width:60px;height:35px;background:var(--glass);border-radius:4px;display:flex;align-items:center;justify-content:center">🎮</div>
+            {% endif %}
+          </td>
+          <td><strong>{{ game.nome }}</strong></td>
+          <td><span class="badge badge-purple">{{ game.genero }}</span></td>
+          <td>{% if game.precos.steam %}R$ {{ game.precos.steam }}{% else %}<span style="color:var(--muted)">—</span>{% endif %}</td>
+          <td>{% if game.precos.nuuvem %}R$ {{ game.precos.nuuvem }}{% else %}<span style="color:var(--muted)">—</span>{% endif %}</td>
+          <td>{% if game.precos.epic %}R$ {{ game.precos.epic }}{% else %}<span style="color:var(--muted)">—</span>{% endif %}</td>
+          <td><span class="stars">★ {{ game.score }}</span></td>
+          <td>
+            <div style="display:flex;gap:.4rem">
+              <a href="{% url 'jogo' game.id %}" class="btn btn-ghost" style="padding:.3rem .8rem;font-size:.8rem">Ver</a>
+              <a href="{% url 'admin_editar' game.id %}" class="btn btn-grad" style="padding:.3rem .8rem;font-size:.8rem">Editar</a>
+              <a href="{% url 'admin_deletar' game.id %}" class="btn btn-danger" style="padding:.3rem .8rem;font-size:.8rem">Deletar</a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8" style="text-align:center;color:var(--muted);padding:2rem">Nenhum jogo cadastrado.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends "games/base.html" %}
+{% block title %}GameDeal — Compare Preços de Jogos{% endblock %}
+
+{% block extra_css %}
+<style>
+  .hero{min-height:88vh;display:flex;align-items:center;position:relative;overflow:hidden}
+  .hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 30% 60%,rgba(139,92,246,.15),transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,.1),transparent 55%)}
+  .hero-title{font-family:'Orbitron',sans-serif;font-size:clamp(1.9rem,5vw,3.5rem);line-height:1.15;margin-bottom:1.2rem}
+  .hero-sub{color:var(--muted);font-size:1rem;line-height:1.8;max-width:520px;margin-bottom:2rem}
+  .search-bar{display:flex;gap:.7rem;max-width:480px}
+  .search-bar .field{flex:1}
+  .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1rem;margin:3rem 0}
+  .stat-box{text-align:center;padding:1.2rem}
+  .stat-num{font-family:'Orbitron',sans-serif;font-size:1.8rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .stat-lbl{color:var(--muted);font-size:.78rem;margin-top:.3rem}
+  .como-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.2rem}
+  .como-card{padding:1.8rem;text-align:center}
+  .como-icon{font-size:2.2rem;margin-bottom:.8rem}
+  .como-card h3{font-size:.95rem;font-weight:700;margin-bottom:.5rem}
+  .como-card p{color:var(--muted);font-size:.83rem;line-height:1.7}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="container" style="position:relative;z-index:1">
+    <span class="section-tag">🔥 Melhores deals do dia</span>
+    <h1 class="hero-title">Compare preços e<br><span class="grad-text">economize nos games</span></h1>
+    <p class="hero-sub">Encontre o menor preço de qualquer jogo entre Steam, Epic, Nuuvem, PS Store e Xbox Store.</p>
+    <div class="search-bar">
+      <form action="{% url 'catalogo' %}" method="get" style="display:flex;gap:.7rem;width:100%">
+        <input type="search" name="q" class="field" placeholder="Buscar jogo... ex: Resident Evil">
+        <button type="submit" class="btn btn-grad">Buscar</button>
+      </form>
+    </div>
+    <p style="margin-top:1rem;color:var(--muted);font-size:.8rem">
+      Em alta:
+      {% for g in destaques %}
+        <a href="{% url 'jogo' g.id %}" style="color:var(--purple);margin-right:.5rem">{{ g.nome }}</a>
+      {% endfor %}
+    </p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="stats-row">
+    <div class="stat-box card"><div class="stat-num">12K+</div><div class="stat-lbl">Jogos monitorados</div></div>
+    <div class="stat-box card"><div class="stat-num">5</div><div class="stat-lbl">Lojas comparadas</div></div>
+    <div class="stat-box card"><div class="stat-num">340K</div><div class="stat-lbl">Usuários ativos</div></div>
+    <div class="stat-box card"><div class="stat-num">R$67</div><div class="stat-lbl">Economia média</div></div>
+  </div>
+</div>
+
+<section class="section" style="background:rgba(255,255,255,.02);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="container">
+    <span class="section-tag">Destaques</span>
+    <h2 class="section-title">Melhores <span class="grad-text">deals agora</span></h2>
+    <div class="games-grid">
+      {% for game in destaques %}
+      <a href="{% url 'jogo' game.id %}">
+        <div class="card" style="overflow:hidden">
+          {% if "http" in game.imagem %}
+            <img src="{{ game.imagem }}" alt="{{ game.nome }}" class="gcard-img"
+                 onerror="this.src='https://placehold.co/460x215/0f0f1a/8b5cf6?text={{ game.nome|urlencode }}'">
+          {% elif game.imagem %}
+            <img src="/media/{{ game.imagem }}" alt="{{ game.nome }}" class="gcard-img"
+                 onerror="this.src='https://placehold.co/460x215/0f0f1a/8b5cf6?text={{ game.nome|urlencode }}'">
+          {% else %}
+            <div style="width:100%;height:150px;background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:10px 10px 0 0;display:flex;align-items:center;justify-content:center;font-size:2.5rem">🎮</div>
+          {% endif %}
+          <div class="gcard-body">
+            <div style="display:flex;justify-content:space-between;margin-bottom:.3rem">
+              <span class="badge badge-purple">{{ game.genero }}</span>
+              <span class="stars">★ {{ game.score }}</span>
+            </div>
+            <p class="gcard-title">{{ game.nome }}</p>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              {% if game.precos.nuuvem %}<span class="price-best">R$ {{ game.precos.nuuvem }}</span>
+              {% elif game.precos.steam %}<span class="price-best">R$ {{ game.precos.steam }}</span>
+              {% endif %}
+              <span style="color:var(--muted);font-size:.75rem">Nuuvem</span>
+            </div>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    <div style="text-align:center;margin-top:2.5rem">
+      <a href="{% url 'catalogo' %}" class="btn btn-ghost">Ver todos os jogos</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:2.5rem">
+      <span class="section-tag">Como funciona</span>
+      <h2 class="section-title">Simples e <span class="grad-text">gratuito</span></h2>
+      <p style="color:var(--muted);max-width:500px;margin:0 auto;font-size:.9rem;line-height:1.7">Você não precisa ir loja por loja. O GameDeal faz isso por você.</p>
+    </div>
+    <div class="como-grid">
+      <div class="como-card card"><div class="como-icon">🔍</div><h3>Pesquise</h3><p>Digite o nome do jogo e veja em quais lojas ele está disponível.</p></div>
+      <div class="como-card card"><div class="como-icon">📊</div><h3>Compare</h3><p>Veja todos os preços lado a lado com o menor valor em destaque.</p></div>
+      <div class="como-card card"><div class="como-icon">🔔</div><h3>Alerte-se</h3><p>Crie um alerta e receba e-mail quando o preço cair.</p></div>
+      <div class="como-card card"><div class="como-icon">💸</div><h3>Economize</h3><p>Compre sempre pelo menor preço e economize em cada compra.</p></div>
+    </div>
+  </div>
+</section>
+{% endblock %}

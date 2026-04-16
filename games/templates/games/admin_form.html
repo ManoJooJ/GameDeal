@@ -1,0 +1,48 @@
+{% extends "games/base.html" %}
+{% block title %}{{ titulo }} — GameDeal{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top:2.5rem;max-width:700px">
+  <span class="section-tag">Admin</span>
+  <h1 class="section-title" style="margin-bottom:1.5rem"><span class="grad-text">{{ titulo }}</span></h1>
+  <div class="card" style="padding:2rem">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="form-group" style="grid-column:1/-1">
+          <label class="lbl">{{ form.nome.label }}</label>
+          {{ form.nome }}
+          {% if form.nome.errors %}<ul class="errorlist">{% for e in form.nome.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+        </div>
+        <div class="form-group">
+          <label class="lbl">{{ form.genero.label }}</label>{{ form.genero }}
+        </div>
+        <div class="form-group">
+          <label class="lbl">{{ form.imagem.label }}</label>{{ form.imagem }}
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label class="lbl">{{ form.descricao.label }}</label>{{ form.descricao }}
+        </div>
+        <div class="form-group">
+          <label class="lbl">{{ form.preco_steam.label }}</label>{{ form.preco_steam }}
+          {% if form.preco_steam.errors %}<ul class="errorlist">{% for e in form.preco_steam.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+        </div>
+        <div class="form-group">
+          <label class="lbl">{{ form.preco_nuuvem.label }}</label>{{ form.preco_nuuvem }}
+        </div>
+        <div class="form-group">
+          <label class="lbl">{{ form.preco_epic.label }}</label>{{ form.preco_epic }}
+        </div>
+        <div class="form-group" style="display:flex;align-items:center;gap:.7rem">
+          {{ form.destaque }}
+          <label style="color:var(--text);margin:0;font-size:.9rem">{{ form.destaque.label }}</label>
+        </div>
+      </div>
+      <div style="display:flex;gap:1rem;margin-top:1.5rem">
+        <button type="submit" class="btn btn-grad">Salvar</button>
+        <a href="{% url 'admin_lista' %}" class="btn btn-ghost">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

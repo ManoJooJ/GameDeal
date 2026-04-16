@@ -1,0 +1,80 @@
+{% extends "games/base.html" %}
+{% block title %}{{ game.nome }} — GameDeal{% endblock %}
+
+{% block extra_css %}
+<style>
+  .price-table td:first-child{color:var(--muted);font-size:.85rem}
+  .best-badge{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);color:#34d399;font-size:.72rem;padding:.15rem .5rem;border-radius:50px;margin-left:.5rem}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top:2.5rem;padding-bottom:3rem">
+  <a href="{% url 'catalogo' %}" style="color:var(--muted);font-size:.85rem;display:inline-flex;align-items:center;gap:.4rem;margin-bottom:1.5rem">← Voltar ao Catálogo</a>
+
+  <div style="display:grid;grid-template-columns:300px 1fr;gap:2.5rem;align-items:start">
+    <div>
+      {% if "http" in game.imagem %}
+        <img src="{{ game.imagem }}" alt="{{ game.nome }}"
+             onerror="this.src='https://placehold.co/460x215/0f0f1a/8b5cf6?text={{ game.nome|urlencode }}'"
+             style="width:100%;border-radius:14px;border:1px solid var(--border)">
+      {% elif game.imagem %}
+        <img src="/media/{{ game.imagem }}" alt="{{ game.nome }}"
+             onerror="this.src='https://placehold.co/460x215/0f0f1a/8b5cf6?text={{ game.nome|urlencode }}'"
+             style="width:100%;border-radius:14px;border:1px solid var(--border)">
+      {% else %}
+        <div style="width:100%;height:220px;background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:4rem">🎮</div>
+      {% endif %}
+    </div>
+    <div>
+      <span class="badge badge-purple">{{ game.genero }}</span>
+      <h1 style="font-family:'Orbitron',sans-serif;font-size:clamp(1.4rem,3vw,2.2rem);margin:.6rem 0 .4rem">{{ game.nome }}</h1>
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem">
+        <span class="stars">★ {{ game.score }}</span>
+        <span style="color:var(--muted);font-size:.85rem">{{ game.ano }} · {{ game.plat }}</span>
+      </div>
+      <p style="color:var(--muted);line-height:1.7;font-size:.9rem;margin-bottom:2rem">{{ game.descricao }}</p>
+
+      <span class="section-tag" style="margin-bottom:1rem;display:inline-block">🏷️ Comparação de Preços</span>
+      <div class="card" style="overflow:hidden;margin-bottom:1rem">
+        <table class="price-table">
+          <thead><tr><th>Plataforma</th><th>Preço</th><th></th></tr></thead>
+          <tbody>
+            {% if game.precos.steam %}
+            <tr>
+              <td>🎮 Steam</td>
+              <td style="font-weight:700;{% if menor == game.precos.steam %}color:#34d399{% endif %}">
+                R$ {{ game.precos.steam }}
+                {% if menor == game.precos.steam %}<span class="best-badge">Melhor</span>{% endif %}
+              </td>
+              <td><a href="#" class="btn btn-ghost" style="padding:.3rem .9rem;font-size:.8rem">Comprar</a></td>
+            </tr>
+            {% endif %}
+            {% if game.precos.nuuvem %}
+            <tr>
+              <td>🛒 Nuuvem</td>
+              <td style="font-weight:700;{% if menor == game.precos.nuuvem %}color:#34d399{% endif %}">
+                R$ {{ game.precos.nuuvem }}
+                {% if menor == game.precos.nuuvem %}<span class="best-badge">Melhor</span>{% endif %}
+              </td>
+              <td><a href="#" class="btn btn-ghost" style="padding:.3rem .9rem;font-size:.8rem">Comprar</a></td>
+            </tr>
+            {% endif %}
+            {% if game.precos.epic %}
+            <tr>
+              <td>⚡ Epic Games</td>
+              <td style="font-weight:700;{% if menor == game.precos.epic %}color:#34d399{% endif %}">
+                R$ {{ game.precos.epic }}
+                {% if menor == game.precos.epic %}<span class="best-badge">Melhor</span>{% endif %}
+              </td>
+              <td><a href="#" class="btn btn-ghost" style="padding:.3rem .9rem;font-size:.8rem">Comprar</a></td>
+            </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+      <p style="color:var(--muted);font-size:.73rem">* Preços podem variar sem aviso prévio.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,142 @@
+{% extends "games/base.html" %}
+{% block title %}Perfil — GameDeal{% endblock %}
+
+{% block extra_css %}
+<style>
+  .profile-header{background:linear-gradient(135deg,rgba(139,92,246,.1),rgba(6,182,212,.05));border-bottom:1px solid var(--border);padding:2.5rem 0}
+  .avatar-wrap{position:relative;width:80px;height:80px;flex-shrink:0}
+  .avatar-img{width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid var(--border)}
+  .avatar-fallback{width:80px;height:80px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:1.8rem;font-weight:900;color:#fff}
+  .avatar-edit{position:absolute;bottom:0;right:0;width:26px;height:26px;border-radius:50%;background:var(--purple);border:2px solid var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.75rem}
+  .tab-bar{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:2rem}
+  .tab{padding:.75rem 1.5rem;font-size:.88rem;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit}
+  .tab.active{color:var(--text);border-bottom-color:var(--purple)}
+  .stat-mini{text-align:center;padding:.8rem 1.2rem;background:var(--glass);border:1px solid var(--border);border-radius:10px}
+  .stat-mini .num{font-family:'Orbitron',sans-serif;font-size:1.2rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .stat-mini .lbl{color:var(--muted);font-size:.72rem;margin-top:.2rem}
+  #modalAvatar{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center}
+  #modalAvatar.open{display:flex}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-header">
+  <div class="container">
+    <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap">
+      <div class="avatar-wrap" onclick="document.getElementById('modalAvatar').classList.add('open')" title="Alterar foto">
+        {% if user.avatar %}
+          <img src="/media/{{ user.avatar }}" alt="Avatar" class="avatar-img">
+        {% else %}
+          <div class="avatar-fallback">{{ username|first|upper }}</div>
+        {% endif %}
+        <div class="avatar-edit">✏️</div>
+      </div>
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;margin-bottom:.3rem">
+          <h2 style="font-family:'Orbitron',sans-serif;font-size:1.2rem">{{ username }}</h2>
+          <span class="badge badge-purple">PRO</span>
+        </div>
+        <p style="color:var(--muted);font-size:.83rem">{{ user.email }} · Maceió, BR</p>
+      </div>
+      <div style="display:flex;gap:.8rem;flex-wrap:wrap">
+        <div class="stat-mini"><div class="num">{{ jogos_destaque|length }}</div><div class="lbl">Salvos</div></div>
+        <div class="stat-mini"><div class="num">{{ jogos_destaque|length }}</div><div class="lbl">Alertas</div></div>
+        <div class="stat-mini"><div class="num" style="font-size:.9rem">R$312</div><div class="lbl">Economizado</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container" style="padding-top:2rem;padding-bottom:3rem">
+  <div class="tab-bar">
+    <button class="tab active" onclick="showTab('lista', this)">❤️ Lista de Desejos</button>
+    <button class="tab" onclick="showTab('alertas', this)">🔔 Alertas</button>
+  </div>
+
+  <div id="tab-lista">
+    <div class="games-grid">
+      {% for game in jogos_destaque %}
+      <a href="{% url 'jogo' game.id %}">
+        <div class="card" style="overflow:hidden">
+          {% if "http" in game.imagem %}
+            <img src="{{ game.imagem }}" alt="{{ game.nome }}" class="gcard-img"
+                 onerror="this.src='https://placehold.co/460x215/0f0f1a/8b5cf6?text={{ game.nome|urlencode }}'">
+          {% elif game.imagem %}
+            <img src="/media/{{ game.imagem }}" alt="{{ game.nome }}" class="gcard-img"
+                 onerror="this.src='https://placehold.co/460x215/0f0f1a/8b5cf6?text={{ game.nome|urlencode }}'">
+          {% else %}
+            <div style="width:100%;height:150px;background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:10px 10px 0 0;display:flex;align-items:center;justify-content:center;font-size:2.5rem">🎮</div>
+          {% endif %}
+          <div class="gcard-body">
+            <div style="display:flex;justify-content:space-between;margin-bottom:.3rem">
+              <span class="badge badge-purple">{{ game.genero }}</span>
+              <span class="stars">★ {{ game.score }}</span>
+            </div>
+            <p class="gcard-title">{{ game.nome }}</p>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              {% if game.precos.nuuvem %}<span class="price-best">R$ {{ game.precos.nuuvem }}</span><span style="color:var(--muted);font-size:.73rem">Nuuvem</span>
+              {% elif game.precos.steam %}<span class="price-best">R$ {{ game.precos.steam }}</span><span style="color:var(--muted);font-size:.73rem">Steam</span>
+              {% else %}<span class="price-best">Grátis</span><span style="color:var(--muted);font-size:.73rem">Steam</span>{% endif %}
+            </div>
+          </div>
+        </div>
+      </a>
+      {% empty %}
+      <p style="color:var(--muted)">Nenhum jogo salvo ainda.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div id="tab-alertas" style="display:none">
+    <div class="card" style="padding:0;overflow:hidden">
+      <table>
+        <thead><tr><th>Jogo</th><th>Alerta abaixo de</th><th>Status</th></tr></thead>
+        <tbody>
+          {% for game in jogos_destaque %}
+          <tr>
+            <td><strong>{{ game.nome }}</strong></td>
+            <td style="color:#34d399">
+              {% if game.precos.nuuvem %}R$ {{ game.precos.nuuvem }}
+              {% elif game.precos.steam %}R$ {{ game.precos.steam }}
+              {% else %}Grátis{% endif %}
+            </td>
+            <td><span class="badge badge-green">Ativo</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:2rem">
+    <a href="{% url 'catalogo' %}" class="btn btn-ghost">Ver Catálogo</a>
+    <a href="{% url 'logout' %}" class="btn btn-danger">Sair</a>
+  </div>
+</div>
+
+<div id="modalAvatar">
+  <div class="card" style="padding:2rem;width:100%;max-width:420px;position:relative">
+    <h3 style="margin-bottom:1.2rem">Alterar foto de perfil</h3>
+    <form method="post" action="{% url 'editar_perfil' %}" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="form-group">
+        <label class="lbl">Selecione uma imagem</label>
+        <input type="file" name="avatar" accept="image/*" class="field" style="padding:.5rem">
+      </div>
+      <div style="display:flex;gap:1rem;margin-top:1rem">
+        <button type="submit" class="btn btn-grad">Salvar</button>
+        <button type="button" class="btn btn-ghost" onclick="document.getElementById('modalAvatar').classList.remove('open')">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function showTab(name, btn) {
+    document.querySelectorAll('[id^="tab-"]').forEach(t => t.style.display = 'none');
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + name).style.display = '';
+    btn.classList.add('active');
+  }
+</script>
+{% endblock %}

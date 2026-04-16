@@ -1,0 +1,18 @@
+{
+  "ManoJooJ": {
+    "email": "123@gmai.com",
+    "password": "123456",
+    "avatar": "avatar_ManoJooJ.webp"
+  },
+  "TESTE": {
+    "email": "TESTE@GMAIL.COM",
+    "password": "teste123",
+    "avatar": ""
+  },
+  "admin": {
+    "email": "admin@gamedeal.com",
+    "password": "admin123",
+    "avatar": "avatar_admin.webp",
+    "is_admin": true
+  }
+}

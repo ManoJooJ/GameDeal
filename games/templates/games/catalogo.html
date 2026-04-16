@@ -1,0 +1,117 @@
+{% extends "games/base.html" %}
+{% block title %}GameDeal — Catálogo{% endblock %}
+
+{% block extra_css %}
+<style>
+  .page-top{background:linear-gradient(135deg,rgba(139,92,246,.1),rgba(6,182,212,.05));border-bottom:1px solid var(--border);padding:2.5rem 0 2rem}
+  .filter-box{background:var(--glass);border:1px solid var(--border);border-radius:14px;backdrop-filter:blur(10px);padding:1.4rem;margin-bottom:2rem}
+  .filter-row{display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end}
+  .fgroup{flex:1;min-width:170px}
+  .pills{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);align-items:center}
+  .pill{background:var(--glass);border:1px solid var(--border);color:var(--muted);border-radius:50px;padding:.28rem .85rem;font-size:.78rem;cursor:pointer;transition:all .2s;font-family:inherit}
+  .pill.active,.pill:hover{background:rgba(139,92,246,.2);border-color:var(--purple);color:var(--text)}
+</style>
+{% endblock %}
+
+{% block content %}
+<header class="page-top">
+  <div class="container">
+    <span class="section-tag">Catálogo</span>
+    <h1 class="section-title">Todos os <span class="grad-text">Jogos</span></h1>
+    <p style="color:var(--muted);font-size:.88rem;margin-top:.3rem">Compare preços em todas as lojas</p>
+  </div>
+</header>
+
+<div class="container section">
+  <form class="filter-box" method="get" action="{% url 'catalogo' %}">
+    <div class="filter-row">
+      <div class="fgroup">
+        <label class="lbl">Buscar jogo</label>
+        <input type="search" name="q" id="searchInput" class="field" placeholder="Nome do jogo..." value="{{ query }}">
+      </div>
+      <div class="fgroup">
+        <label class="lbl">Plataforma</label>
+        <select name="plataforma" class="field">
+          <option value="">Todas</option>
+          <option>PC</option><option>PS5</option><option>Xbox</option><option>Switch</option>
+        </select>
+      </div>
+      <div class="fgroup">
+        <label class="lbl">Ordenar</label>
+        <select name="ordem" class="field">
+          <option>Melhor nota</option>
+          <option>Menor preço</option>
+          <option>Nome A-Z</option>
+        </select>
+      </div>
+      <div style="padding-bottom:1px">
+        <button type="submit" class="btn btn-grad" style="height:42px">Filtrar</button>
+      </div>
+    </div>
+    <div class="pills">
+      <span style="color:var(--muted);font-size:.78rem">Gênero</span>
+      <button type="button" class="pill active" onclick="fg('',this)">Todos</button>
+      <button type="button" class="pill" onclick="fg('RPG',this)">RPG</button>
+      <button type="button" class="pill" onclick="fg('Ação',this)">Ação</button>
+      <button type="button" class="pill" onclick="fg('Indie',this)">Indie</button>
+      <button type="button" class="pill" onclick="fg('Terror',this)">Terror</button>
+      <button type="button" class="pill" onclick="fg('Sandbox',this)">Sandbox</button>
+    </div>
+  </form>
+
+  <p style="color:var(--muted);font-size:.85rem;margin-bottom:1.2rem" id="resultCount">{{ games|length }} jogo(s) encontrado(s)</p>
+
+  <div class="games-grid" id="gamesGrid">
+    {% for game in games %}
+    <a href="{% url 'jogo' game.id %}">
+      <div class="card" style="overflow:hidden" data-genero="{{ game.genero }}">
+        {% if "http" in game.imagem %}
+          <img src="{{ game.imagem }}" alt="{{ game.nome }}" class="gcard-img"
+               onerror="this.src='https://placehold.co/460x215/0f0f1a/8b5cf6?text={{ game.nome|urlencode }}'">
+        {% elif game.imagem %}
+          <img src="/media/{{ game.imagem }}" alt="{{ game.nome }}" class="gcard-img"
+               onerror="this.src='https://placehold.co/460x215/0f0f1a/8b5cf6?text={{ game.nome|urlencode }}'">
+        {% else %}
+          <div style="width:100%;height:150px;background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:10px 10px 0 0;display:flex;align-items:center;justify-content:center;font-size:2.5rem">🎮</div>
+        {% endif %}
+        <div class="gcard-body">
+          <div style="display:flex;justify-content:space-between;margin-bottom:.3rem">
+            <span class="badge badge-purple">{{ game.genero }}</span>
+            <span class="stars">★ {{ game.score }}</span>
+          </div>
+          <p class="gcard-title">{{ game.nome }}</p>
+          <p style="color:var(--muted);font-size:.73rem;margin-bottom:.6rem">{{ game.ano }} · {{ game.plat }}</p>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            {% if game.precos.nuuvem %}<span class="price-best">R$ {{ game.precos.nuuvem }}</span>
+            {% elif game.precos.steam %}<span class="price-best">R$ {{ game.precos.steam }}</span>
+            {% else %}<span class="price-best">Grátis</span>{% endif %}
+            <span style="color:var(--muted);font-size:.73rem">Nuuvem</span>
+          </div>
+        </div>
+      </div>
+    </a>
+    {% empty %}
+    <div style="grid-column:1/-1;text-align:center;padding:4rem;color:var(--muted)">
+      <p style="font-size:2rem">🎮</p>
+      <p style="margin-top:.5rem">Nenhum jogo encontrado.</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+  function fg(genero, btn) {
+    document.querySelectorAll('.pill').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const cards = document.querySelectorAll('#gamesGrid > a');
+    let count = 0;
+    cards.forEach(a => {
+      const g = a.querySelector('[data-genero]')?.dataset.genero || '';
+      const show = !genero || g === genero;
+      a.style.display = show ? '' : 'none';
+      if (show) count++;
+    });
+    document.getElementById('resultCount').textContent = count + ' jogo(s) encontrado(s)';
+  }
+</script>
+{% endblock %}

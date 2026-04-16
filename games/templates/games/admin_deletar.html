@@ -1,0 +1,21 @@
+{% extends "games/base.html" %}
+{% block title %}Deletar — GameDeal{% endblock %}
+
+{% block content %}
+<div class="container" style="min-height:70vh;display:flex;align-items:center;justify-content:center">
+  <div style="max-width:480px;width:100%;text-align:center">
+    <div class="card" style="padding:2.5rem">
+      <div style="font-size:3rem;margin-bottom:1rem">⚠️</div>
+      <h2 style="margin-bottom:.5rem">Confirmar exclusão</h2>
+      <p style="color:var(--muted);margin-bottom:1.5rem">
+        Tem certeza que deseja remover <strong style="color:var(--text)">{{ game.nome }}</strong>?
+      </p>
+      <form method="post" style="display:flex;gap:1rem;justify-content:center">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Sim, deletar</button>
+        <a href="{% url 'admin_lista' %}" class="btn btn-ghost">Cancelar</a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

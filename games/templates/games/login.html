@@ -1,0 +1,31 @@
+{% extends "games/base.html" %}
+{% block title %}Login — GameDeal{% endblock %}
+
+{% block content %}
+<div class="container" style="min-height:80vh;display:flex;align-items:center;justify-content:center;padding:2rem 1.5rem">
+  <div style="width:100%;max-width:420px">
+    <div style="text-align:center;margin-bottom:2rem">
+      <span class="section-tag">Acesso</span>
+      <h1 class="section-title" style="font-size:1.8rem">Entrar na <span class="grad-text">conta</span></h1>
+    </div>
+    <div class="card" style="padding:2rem">
+      <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-group">
+          <label class="lbl">{{ field.label }}</label>
+          <input type="{{ field.field.widget.input_type }}" name="{{ field.html_name }}"
+                 class="field" placeholder="{{ field.label }}"
+                 {% if field.value %}value="{{ field.value }}"{% endif %}>
+          {% if field.errors %}<ul class="errorlist">{% for e in field.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-grad" style="width:100%;justify-content:center;padding:.8rem">Entrar</button>
+      </form>
+      <p style="text-align:center;margin-top:1.2rem;color:var(--muted);font-size:.88rem">
+        Não tem conta? <a href="{% url 'cadastro' %}" style="color:var(--purple)">Cadastre-se</a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}
