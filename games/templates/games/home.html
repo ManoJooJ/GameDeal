@@ -76,10 +76,19 @@
             </div>
             <p class="gcard-title">{{ game.nome }}</p>
             <div style="display:flex;justify-content:space-between;align-items:center">
-              {% if game.precos.nuuvem %}<span class="price-best">R$ {{ game.precos.nuuvem }}</span>
-              {% elif game.precos.steam %}<span class="price-best">R$ {{ game.precos.steam }}</span>
+              {% if game.preco_nuuvem %}
+                <span class="price-best">R$ {{ game.preco_nuuvem }}</span>
+                <span style="color:var(--muted);font-size:.75rem">Nuuvem</span>
+              {% elif game.preco_steam %}
+                <span class="price-best">R$ {{ game.preco_steam }}</span>
+                <span style="color:var(--muted);font-size:.75rem">Steam</span>
+              {% elif game.preco_epic %}
+                <span class="price-best">R$ {{ game.preco_epic }}</span>
+                <span style="color:var(--muted);font-size:.75rem">Epic</span>
+              {% else %}
+                <span class="price-best">Grátis</span>
+                <span></span>
               {% endif %}
-              <span style="color:var(--muted);font-size:.75rem">Nuuvem</span>
             </div>
           </div>
         </div>

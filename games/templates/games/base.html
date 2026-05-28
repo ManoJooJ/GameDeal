@@ -69,11 +69,14 @@
     .gcard-title{font-weight:700;font-size:.9rem;margin:.4rem 0 .6rem}
     .price-best{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);color:#34d399;font-weight:700;font-size:.88rem;padding:.3rem .75rem;border-radius:8px}
 
-    /* Mensagens */
+    /* Mensagens — cobre tags do Django (success, error, warning, info) */
     .messages{margin-bottom:1rem}
     .message{padding:.8rem 1rem;border-radius:10px;margin-bottom:.5rem;font-size:.9rem}
-    .message.error{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#f87171}
+    .message.error,
+    .message.danger{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#f87171}
     .message.success{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:#34d399}
+    .message.warning{background:rgba(234,179,8,.12);border:1px solid rgba(234,179,8,.3);color:#fbbf24}
+    .message.info{background:rgba(6,182,212,.12);border:1px solid rgba(6,182,212,.3);color:#22d3ee}
     .errorlist{list-style:none;color:#f87171;font-size:.8rem;margin-top:.3rem}
 
     /* Form group */
@@ -108,9 +111,9 @@
     <li><a href="{% url 'home' %}">Início</a></li>
     <li><a href="{% url 'catalogo' %}">Catálogo</a></li>
     {% if request.session.user %}
-      <li><a href="{% url 'perfil' %}">{{ request.session.user }}</a></li>
+      <li><a href="{% url 'perfil' %}">👤 {{ request.session.user }}</a></li>
       {% if request.session.is_admin %}
-        <li><a href="{% url 'admin_lista' %}">Admin</a></li>
+        <li><a href="{% url 'admin_lista' %}" style="color:var(--cyan)">⚙️ Admin</a></li>
       {% endif %}
       <li><a href="{% url 'logout' %}">Sair</a></li>
     {% else %}
@@ -118,7 +121,7 @@
       <li><a href="{% url 'cadastro' %}" class="btn-nav">Cadastrar</a></li>
     {% endif %}
   </ul>
-  <button class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')">
+  <button class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
 </nav>
@@ -156,7 +159,9 @@
           <li><a href="{% url 'home' %}">Início</a></li>
           <li><a href="{% url 'catalogo' %}">Catálogo</a></li>
           <li><a href="{% url 'login' %}">Login</a></li>
-          <li><a href="{% url 'perfil' %}">Minha Lista</a></li>
+          {% if request.session.user %}
+            <li><a href="{% url 'perfil' %}">Minha Lista</a></li>
+          {% endif %}
         </ul>
       </div>
     </div>
@@ -165,5 +170,6 @@
     </div>
   </div>
 </footer>
+
 </body>
 </html>

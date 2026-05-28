@@ -24,8 +24,8 @@
   <div class="container">
     <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap">
       <div class="avatar-wrap" onclick="document.getElementById('modalAvatar').classList.add('open')" title="Alterar foto">
-        {% if user.avatar %}
-          <img src="/media/{{ user.avatar }}" alt="Avatar" class="avatar-img">
+        {% if perfil.avatar %}
+          <img src="/media/{{ perfil.avatar }}" alt="Avatar" class="avatar-img">
         {% else %}
           <div class="avatar-fallback">{{ username|first|upper }}</div>
         {% endif %}
@@ -74,9 +74,19 @@
             </div>
             <p class="gcard-title">{{ game.nome }}</p>
             <div style="display:flex;justify-content:space-between;align-items:center">
-              {% if game.precos.nuuvem %}<span class="price-best">R$ {{ game.precos.nuuvem }}</span><span style="color:var(--muted);font-size:.73rem">Nuuvem</span>
-              {% elif game.precos.steam %}<span class="price-best">R$ {{ game.precos.steam }}</span><span style="color:var(--muted);font-size:.73rem">Steam</span>
-              {% else %}<span class="price-best">Grátis</span><span style="color:var(--muted);font-size:.73rem">Steam</span>{% endif %}
+              {% if game.preco_nuuvem %}
+                <span class="price-best">R$ {{ game.preco_nuuvem }}</span>
+                <span style="color:var(--muted);font-size:.73rem">Nuuvem</span>
+              {% elif game.preco_steam %}
+                <span class="price-best">R$ {{ game.preco_steam }}</span>
+                <span style="color:var(--muted);font-size:.73rem">Steam</span>
+              {% elif game.preco_epic %}
+                <span class="price-best">R$ {{ game.preco_epic }}</span>
+                <span style="color:var(--muted);font-size:.73rem">Epic</span>
+              {% else %}
+                <span class="price-best">Grátis</span>
+                <span></span>
+              {% endif %}
             </div>
           </div>
         </div>
@@ -96,8 +106,9 @@
           <tr>
             <td><strong>{{ game.nome }}</strong></td>
             <td style="color:#34d399">
-              {% if game.precos.nuuvem %}R$ {{ game.precos.nuuvem }}
-              {% elif game.precos.steam %}R$ {{ game.precos.steam }}
+              {% if game.preco_nuuvem %}R$ {{ game.preco_nuuvem }}
+              {% elif game.preco_steam %}R$ {{ game.preco_steam }}
+              {% elif game.preco_epic %}R$ {{ game.preco_epic }}
               {% else %}Grátis{% endif %}
             </td>
             <td><span class="badge badge-green">Ativo</span></td>

@@ -122,3 +122,12 @@ import os
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 os.makedirs(MEDIA_ROOT, exist_ok=True)
+
+'games.middleware.SessaoAuthMiddleware',  
+
+# Sessão expira ao fechar o navegador
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# Idioma e fuso horário brasileiros
+LANGUAGE_CODE = 'pt-br'
+TIME_ZONE = 'America/Maceio'
